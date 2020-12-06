@@ -31,3 +31,11 @@ export const Div:React.FC<{ children: any, type?: "center"|"bottom"|"", flex?: n
     <View style={[base, style]}>{children}</View>
     );
 }
+
+export const NotFound = () => {
+    return(
+        <View style={{flex: 1, width: '80%', height: 250,justifyContent: 'center', alignItems: 'center', alignContent: 'center', alignSelf:'center', borderColor: 'grey', borderWidth: 2, borderStyle: 'solid'}}>
+            <Text style={{textAlign: 'center'}}>Nada aqui</Text>
+        </View>
+    );
+}

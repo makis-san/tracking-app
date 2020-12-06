@@ -2,29 +2,42 @@ import axios from "axios";
 import { DOMElement } from "react";
 import cheerio from 'cheerio';
 import { formatStatus, formatDateTime, formatLocal, formatOrigin, formatDestiny } from "../formatter";
+import tableToJson from '../table';
 global.Buffer = global.Buffer || require('buffer').Buffer;
 
 const url:any = {
   Correios: {url:'https://www.linkcorreios.com.br/', method: 'get', data: {}},
-  CargoBr: {url:'http://app.cargobr.com/Rastreamentos/Rastreamento/rastrear', method: 'post', data: {tipoBusca: 'P', nroBusca: ''}}
+  CargoBr: {url:'http://app.cargobr.com/Rastreamentos/Rastreamento/rastrear', method: 'post', data: {tipoBusca: 'P', nroBusca: ''}},
+  Jadlog: {url: 'http://www.jadlog.com.br/siteInstitucional/tracking.jad', method: 'get', urlData:''}
 }
 
-export default async function track(tracking: string, carrier: 'Correios'|'CargoBr') { 
+
+
+export default async function track(tracking: string, carrier: 'Correios'|'CargoBr'|'Jadlog') { 
   let method:any = url[carrier].method;
+  let urlData:string = '';
   let data: any = {};
   switch (carrier) {
     case'Correios':
       data = {url: tracking}
       break;
     case'CargoBr':
-      data ={
+      data = {
         tipoBusca: 'P',
         nroBusca: tracking
       }
       break;
+    case "Jadlog":
+      urlData = '?cte='+tracking;
+      data = {
+          
+      };
+      break;
   }
+
+  /// Setup Axios
   const api = axios.create({
-    baseURL: url[carrier].url,
+    baseURL: url[carrier].url+urlData,
   });
     const response = (await api({
       url: data.url,
@@ -34,8 +47,11 @@ export default async function track(tracking: string, carrier: 'Correios'|'Cargo
     return response;
 }
 
-function convertHtmlToJson(htmlString:string, carrier:string) {
+function convertHtmlToJson(htmlString:string, carrier: 'Correios'|'CargoBr'|'Jadlog') {
     const html = cheerio.load(htmlString);
+    // console.log(htmlString);
+    // console.log(tableToJson(htmlString));
+
     let find:string = '';
     const elemArray:any = [];
       if (carrier == 'Correios') {
@@ -43,11 +59,17 @@ function convertHtmlToJson(htmlString:string, carrier:string) {
          elemArray.push(elem);
        });
        find = 'li';
-    } else {
-      html("div.tracking-detalhe").each((_, elem) => {
+    } else if (carrier == "CargoBr"){
+      html("div.tracking").each((_, elem) => {
         elemArray.push(elem);
       });
       find = '.col-md-11';
+    } else if (carrier == "Jadlog") {
+      html("table").each((_, elem) => {
+        elemArray.push(elem);
+      });
+    } else {
+      return;
     }
     elemArray.shift()
     const elemMap = elemArray.map((elem:any) => {
@@ -72,4 +94,3 @@ function convertHtmlToJson(htmlString:string, carrier:string) {
     });
     return elemMap.reverse();
   }
-  

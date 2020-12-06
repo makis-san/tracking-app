@@ -6,7 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import { FAB, Provider, Portal } from 'react-native-paper';
 import { useNavigation  } from '@react-navigation/native';
 import Swipeable from 'react-native-swipeable-row';
-import { _deleteAll } from'./functions';
+import { _deleteAll, _archive } from'../../services/parcels/functions';
 import AppContext from '../../components/AppContext';
 
 export const List = styled.ScrollView`
@@ -58,11 +58,13 @@ export function FloatingButton(){
 };
   
 export const Item:React.FC<{
+    id: string,
     title: string, 
     state: string, 
     start: string,
     carrier: string,
 }> = ({
+    id,
     title,
     state,
     start,
@@ -121,7 +123,7 @@ export const Item:React.FC<{
     const userData:any = useContext(AppContext);
     let startDate = new Date(start);
     let actualDate = new Date();
-
+    
     let days = Math.ceil((actualDate.getTime() - startDate.getTime()) / (1000*3600*24));
 
     const leftContent = <Text>Pull to activate</Text>;
@@ -138,7 +140,7 @@ export const Item:React.FC<{
         <Feather name={'delete'} size={28} color='white'></Feather>
     </TouchableOpacity>,
         <TouchableOpacity 
-        onPress={() => userData.setData(_deleteAll())}
+        onPress={() => userData.setData(_archive(id))}
     style={{
         backgroundColor: '#dbce86',
         padding: 25,

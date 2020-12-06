@@ -1,7 +1,7 @@
 export interface userData {
     parcels: [
         {
-            id: number,
+            id: string,
             name: string,
             last: string,
             events: [Record<string,string>],

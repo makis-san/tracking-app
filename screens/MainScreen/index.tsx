@@ -3,9 +3,11 @@ import { StyleSheet, TouchableOpacity, Text, View, RefreshControl } from 'react-
 import Constants from 'expo-constants';
 import { List, Item, FloatingButton } from './styles';
 import { userData, ParcelData } from '../../@types/index';
-import { _retrieveData } from './functions';
+import { _retrieveData } from '../../services/parcels/functions';
 import AppContext from "../../components/AppContext";
 import { HookCallbacks } from 'async_hooks';
+import { NotFound } from '../../components/common_elements';
+
 
 /*
 * Correios: OK816005360BR
@@ -30,6 +32,9 @@ export default function MainScreen () {
          setRefresh(false);
         }, 2000);
     },[]);
+
+    const parcels = userData?.data?.parcels?.filter(item => !item.archived) ?? [];
+
     return(
     
         <View style={{flex: 1}}>
@@ -37,12 +42,9 @@ export default function MainScreen () {
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
                { 
-               userData.data?.parcels?.map(item => 
-                 {
-                    // return;
-                    return <Item key={item.id} title={item.name} start={item.events[0]['data']} state={item.last} carrier={item.carrier}  />;
-                 }
-               )
+               parcels.length > 0 
+               ? parcels.map(item => <Item id={item.id} key={item.id} title={item.name} start={item.events[0]['data']} state={item.last} carrier={item.carrier}  />)
+               : <NotFound/>
                }
             </List>
             <FloatingButton/>

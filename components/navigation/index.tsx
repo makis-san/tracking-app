@@ -13,6 +13,7 @@ const Tab = createBottomTabNavigator();
 */
 
 import MainScreen from '../../screens/MainScreen';
+import ArchivedScreen from '../../screens/Archived';
 import AddParcel from '../../screens/AddParcel';
 
 export default function Main() {
@@ -56,7 +57,7 @@ export default function Main() {
         >
             <Tab.Screen name="Encomendas" component={MainScreen} />
             <Tab.Screen name="AddParcel" component={AddParcel} options={{tabBarVisible: false, title: ''}} />
-            <Tab.Screen name="Arquivo" component={MainScreen}/>
+            <Tab.Screen name="Arquivo" component={ArchivedScreen}/>
 
             {/* <Tab.Screen name="Settings" component={} /> */}
         </Tab.Navigator>

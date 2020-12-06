@@ -5,7 +5,7 @@ import { Div } from '../../components/common_elements';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { TextInput, Button, Divider } from 'react-native-paper';
-import { _saveData, _deleteAll } from '../MainScreen/functions';
+import { _saveData, _deleteAll } from '../../services/parcels/functions';
 import AppContext from '../../components/AppContext';
 import { userData } from '../../@types';
 export default function AddParcel() {
@@ -48,6 +48,7 @@ export default function AddParcel() {
                         <Picker.Item label="Selecione a Transportadora" value="null" />
                         <Picker.Item label="Correios Brasil" value="Correios" />
                         <Picker.Item label="CargoBr" value="CargoBr" />
+                        <Picker.Item label="JadLog" value="Jadlog" />
                     </Picker>
                 </View>
                 <Button icon={() => <Feather name={'package'} size={24} color={'white'}></Feather>} mode="contained" style={{marginTop:10, backgroundColor: '#434994'}}
@@ -62,6 +63,10 @@ export default function AddParcel() {
                 <Button icon={() => <Feather name={'package'} size={24} color={'white'}></Feather>} mode="contained" style={{marginTop:10, backgroundColor: '#434994'}}
                 onPress={() => userData.setData(_deleteAll())}>
                     delete data
+                </Button>
+                <Button icon={() => <Feather name={'package'} size={24} color={'white'}></Feather>} mode="contained" style={{marginTop:10, backgroundColor: '#434994'}}
+                onPress={() => console.log(userData.data)}>
+                    show data
                 </Button>
             </View>
         </KeyboardAvoidingView>
