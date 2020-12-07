@@ -18,7 +18,7 @@ export async function _archive(id: string) {
             
         });
         AsyncStorage.setItem('data', JSON.stringify(data));
-        // console.log(data);
+        console.log(data);
         return JSON.stringify(data);
     } catch (error) {
         console.log(error);

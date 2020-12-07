@@ -10,11 +10,12 @@ import { HookCallbacks } from 'async_hooks';
 import { NotFound } from '../../components/common_elements';
 
 import { Dimensions } from 'react-native';
+import { promises } from 'fs';
 
 let windowHeight = Dimensions.get('window').height;
 /*
 * Correios: OK816005360BR
-*
+*           JN407679359BR
 */
 
 
@@ -22,7 +23,7 @@ export default function MainScreen () {
     const userData = useContext<{data:userData, setData:(data?:userData)=> void}>(AppContext);
     
     async function fetchData(){
-        userData.setData(await _retrieveData());
+      userData.setData(await _retrieveData());
     }
     
     useEffect(()=>{ fetchData()},[])
@@ -45,7 +46,7 @@ export default function MainScreen () {
             >
                { 
                parcels.length > 0 
-               ? parcels.map(item => <Item events={item.events} id={item.id} key={item.id} title={item.name} start={item.events[0]['data']} state={item.last} carrier={item.carrier}  />)
+               ? parcels.map(item => <Item id={item.id} data={item} />)
                : <NotFound/>
                }
             </List>

@@ -47,13 +47,12 @@ export default function MainScreen () {
             >
             <StyledText color={'#434994'} style={{marginBottom: 15, textTransform: 'uppercase', textAlign: 'center'}} weight={'bold'}> Archived Parcels</StyledText>
             <Divider/>
-               { 
+            { 
                parcels.length > 0 
-               ? parcels.map(item => <Item events={item.events} id={item.id} key={item.id} title={item.name} start={item.events[0]['data']} state={item.last} carrier={item.carrier}  />)
+               ? parcels.map(item => <Item id={item.id} data={item} />)
                : <NotFound/>
                }
             </List>
-            <FloatingButton/>
         </View>
     );
 

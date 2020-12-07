@@ -9,25 +9,26 @@ import Swipeable from 'react-native-swipeable-row';
 import { _deleteAll, _archive, _delete } from'../../services/parcels/functions';
 import AppContext from '../../components/AppContext';
 import { env } from 'process';
+import { ParcelData } from '../../@types';
 
  export const Item:React.FC<{
-    id: string,
-    title: string, 
-    state: string, 
-    start: string,
-    carrier: string,
-    events: any
+    data: {
+        id: string;
+        name: string;
+        last: string;
+        events: [Record<string, string>];
+        sent_at: string;
+        carrier: string;
+        tracking: string;
+        added_at: string;
+        archived: boolean;
+    }
 }> = ({
-    id,
-    title,
-    state,
-    start,
-    carrier,
-    events
+    data
 }) => {
     let color:string = '#434994';
-    if (state.indexOf('entrega ao destinatário')) {
-        color = '#439447'
+    if (data.events[data.events.length-1].status.indexOf('entregue')) {
+        // color = '#439447'
     }
     
     const styles = StyleSheet.create({
@@ -75,63 +76,69 @@ import { env } from 'process';
               fontSize: 12
           }
     })
-
+    let startDateS = data.events[data.events.length-1].data;
     const userData:any = useContext(AppContext);
-    let startDate = new Date(start);
-    let actualDate = new Date();
-    let days = Math.ceil((actualDate.getTime() - startDate.getTime()) / (1000*3600*24));
+    let start = startDateS.split('/');
+        let startDate = new Date(start[1]+'/'+start[0]+'/'+start[2]);
+        let actualDate = new Date();
+        const leftButtons = [
+            <TouchableOpacity 
+            onPress={() => userData.setData(_archive(data.id))}
+            style={{
+                backgroundColor: '#dbce86',
+                padding: 25,
+                marginTop: 10,
+                flex: 1,
+            }}>
+            <Div type={'center'}>  
+              <Feather name={'archive'} size={28} color='white'></Feather>
+            </Div>
+        </TouchableOpacity>
+        ]
     const rightButtons = [
         <TouchableOpacity 
-        onPress={() => userData.setData(_delete(id))}
+        onPress={() => userData.setData(_delete(data.id))}
         style={{
+            flex: 1,
             backgroundColor: '#db8686',
             padding: 25,
             marginTop: 10,
-            flex: 1,
         }}>
-        <Feather name={'delete'} size={28} color='white'></Feather>
-    </TouchableOpacity>,
-        <TouchableOpacity 
-        onPress={() => userData.setData(_archive(id))}
-        style={{
-            backgroundColor: '#dbce86',
-            padding: 25,
-            marginTop: 10,
-            flex: 1,
-        }}>
-        <Feather name={'archive'} size={28} color='white'></Feather>
-    </TouchableOpacity>,
+            <Div type={'center'}>  
+              <Feather name={'delete'} size={28} color='white'></Feather>
+            </Div>
+    </TouchableOpacity>
     ];
     const navigation = useNavigation();
     return(
-      <Swipeable rightButtons={rightButtons}>
-        <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('Details', {title: title, id: id, carrier: carrier, events: events})}>
+      <Swipeable rightButtons={rightButtons} leftContent={leftButtons}>
+        <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('Details', {title: data.name, id: data.id, carrier: data.carrier, events: data.events})}>
             <Div style={{flexDirection: 'row'}}>
                 <Div type='center' flex={0} style={{marginRight: 20}}>
                     <Feather name="map-pin" size={24} color={color}/>
                 </Div>
                 <Div type='center' flex={2}>
                     <StyledText weight={'700'}>
-                        {title}
+                        {data.name}
                     </StyledText>
                     <StyledText>
-                        {state}
+                        {data.last}
                     </StyledText>
                 </Div>
                 <Div type='center' flex={1}>
                     <View style={styles.date_holder}>
                         <StyledText weight={'800'} style={styles.carrier_text}>
-                            {carrier}
+                            {data.carrier}
                         </StyledText>
                     </View>
                     <StyledText weight={'700'} style={styles.item_date}>
-                        {start}
+                        {startDateS}
                     </StyledText>
                 </Div>
             </Div>
             <Div style={styles.counter}>
                 <StyledText weight={'800'} style={styles.counter_text}>
-                    Enviado há {days} dias...
+                    Enviado há {Math.ceil((actualDate.getTime() - startDate.getTime()) / (1000*3600*24))} dias...
                 </StyledText>
             </Div>
         </TouchableOpacity>

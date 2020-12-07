@@ -6,6 +6,7 @@ import { createStackNavigator, HeaderTitle } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
 
+
 const App = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -57,6 +58,7 @@ const Tabs = () => {
                 inactiveTintColor: 'gray',
             }}
             >
+
                 <Tab.Screen name="Encomendas" component={MainScreen} />
                 <Tab.Screen name="AddParcel" component={AddParcel} options={{tabBarVisible: false, title: ''}} />
                 <Tab.Screen name="Arquivo" component={ArchivedScreen}/>
