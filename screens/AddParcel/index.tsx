@@ -17,14 +17,20 @@ export default function AddParcel(navigation = useNavigation()) {
 
     const [saving = false, setSaving]:any = useState();
 
-    useEffect(()=>{ setSaving(false)})
-
     const [carrier, setCarrier]:any = useState();
     let dataToSave = {
         'name': name,
         'tracking': rastreio,
         'carrier': carrier
     };
+    const CreateParcel = async (dataToSave: any) => {
+        setSaving(true);
+        let data = await _saveData(dataToSave);
+        userData.setData(data);
+        setSaving(false);
+        return navigation.navigate('Encomendas');
+    }
+
     return(
         <View>
         {
@@ -77,14 +83,7 @@ export default function AddParcel(navigation = useNavigation()) {
                     </Picker>
                 </View>
                 <Button icon={() => <Feather name={'package'} size={24} color={'white'}></Feather>} mode="contained" style={{marginTop:10, backgroundColor: '#434994'}}
-            onPress={async () => {
-                setSaving(true);
-                    return userData.setData(await _saveData(dataToSave)).then(() => {
-                        setSaving(false)
-                        navigation.navigate('Encomendas');
-                    });
-            }
-            }>
+                onPress={() => CreateParcel(dataToSave)}>
                     Adicionar
                 </Button>
                 <Button icon={() => <Feather name={'package'} size={24} color={'white'}></Feather>} mode="contained" style={{marginTop:10, backgroundColor: '#434994'}}

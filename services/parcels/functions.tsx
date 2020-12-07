@@ -18,7 +18,23 @@ export async function _archive(id: string) {
             
         });
         AsyncStorage.setItem('data', JSON.stringify(data));
-        console.log(data);
+        // console.log(data);
+        return JSON.stringify(data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function _delete(id: string) {
+    try {
+        let Fetched:any = await AsyncStorage.getItem('data');
+        if (!Fetched) return;
+        let data = JSON.parse(Fetched) as userData;
+        data.parcels.filter(function(item, index) { 
+            if (item.id != id) return;
+            delete data.parcels[index];   
+        });
+        AsyncStorage.setItem('data', JSON.stringify(data));
         return JSON.stringify(data);
     } catch (error) {
         console.log(error);
@@ -49,7 +65,7 @@ export async function _saveData(dataToSave:any) {
     let newData:any, oldData:userData|undefined = undefined;
     const trackData:[{data:string, hora:string, local:string, status:string}] = await track(dataToSave.tracking, dataToSave.carrier);
     if (!trackData) return;
-    console.log(trackData);
+    // console.log(trackData);
     let Fetched = await AsyncStorage.getItem('data');
     
     if (Fetched) oldData = JSON.parse(Fetched) as userData;
@@ -84,7 +100,7 @@ export async function _saveData(dataToSave:any) {
                 }
             ]
         };
-        console.log(newData);
+        // console.log(newData);
         AsyncStorage.setItem('data', JSON.stringify(newData));
         return newData;
     }

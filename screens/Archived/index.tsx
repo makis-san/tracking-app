@@ -36,7 +36,7 @@ export default function MainScreen () {
         }, 2000);
     },[]);
 
-    const parcels = userData?.data?.parcels?.filter(item => item.archived) ?? [];
+    const parcels = userData?.data?.parcels?.filter(item => item && item.archived) || [];
 
     return(
     

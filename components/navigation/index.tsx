@@ -71,7 +71,7 @@ export default function Main() {
         <NavigationContainer>
             <App.Navigator initialRouteName={"App"} screenOptions={{headerStyle: {backgroundColor: '#434994'}, headerTintColor:'#fff'}}>
                 <App.Screen name="App" component={Tabs} options={{headerShown: false}}/>
-                <App.Screen name="Details" component={Details} options={({ route = useRoute() }:any) => ({ title: route?.params?.title })}/>
+                <App.Screen name="Details" component={Details} options={({ route = useRoute() }:any) => ({ title: route?.params?.title+ ' ['+route?.params?.carrier+']' })}/>
             </App.Navigator>
         </NavigationContainer>
     );

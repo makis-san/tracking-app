@@ -6,7 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import { FAB, Provider, Portal } from 'react-native-paper';
 import { useNavigation  } from '@react-navigation/native';
 import Swipeable from 'react-native-swipeable-row';
-import { _deleteAll, _archive } from'../../services/parcels/functions';
+import { _deleteAll, _archive, _delete } from'../../services/parcels/functions';
 import AppContext from '../../components/AppContext';
 import { env } from 'process';
 
@@ -82,7 +82,7 @@ import { env } from 'process';
     let days = Math.ceil((actualDate.getTime() - startDate.getTime()) / (1000*3600*24));
     const rightButtons = [
         <TouchableOpacity 
-        onPress={() => userData.setData(_deleteAll())}
+        onPress={() => userData.setData(_delete(id))}
         style={{
             backgroundColor: '#db8686',
             padding: 25,
@@ -105,7 +105,7 @@ import { env } from 'process';
     const navigation = useNavigation();
     return(
       <Swipeable rightButtons={rightButtons}>
-        <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('Details', {title: title, events: events})}>
+        <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('Details', {title: title, id: id, carrier: carrier, events: events})}>
             <Div style={{flexDirection: 'row'}}>
                 <Div type='center' flex={0} style={{marginRight: 20}}>
                     <Feather name="map-pin" size={24} color={color}/>
