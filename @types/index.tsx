@@ -24,3 +24,12 @@ export interface ParcelData {
     added_at: string,
     archived: boolean
 };
+
+export interface EventsData {
+    data: string,
+    hora: string,
+    destino?: string,
+    origem?: string,
+    local?: string,
+    status?: string
+}

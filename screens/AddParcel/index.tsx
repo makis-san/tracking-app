@@ -1,17 +1,24 @@
-import React, { useState, useContext } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Picker, KeyboardAvoidingView } from 'react-native';
-import styled from 'styled-components/native';
-import { Div } from '../../components/common_elements';
+import React, { useState, useContext, useEffect } from 'react';
+import { Text, ActivityIndicator, View, Picker, KeyboardAvoidingView } from 'react-native';
+import { Div, StyledText } from '../../components/common_elements';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { TextInput, Button, Divider } from 'react-native-paper';
 import { _saveData, _deleteAll } from '../../services/parcels/functions';
 import AppContext from '../../components/AppContext';
 import { userData } from '../../@types';
-export default function AddParcel() {
+import { Dimensions } from 'react-native';
+
+let windowHeight = Dimensions.get('window').height;
+export default function AddParcel(navigation = useNavigation()) {
     const userData:any = useContext(AppContext);
     const [rastreio, setRastreio]:any = useState();
     const [name, setName]:any = useState();
+
+    const [saving = false, setSaving]:any = useState();
+
+    useEffect(()=>{ setSaving(false)})
+
     const [carrier, setCarrier]:any = useState();
     let dataToSave = {
         'name': name,
@@ -19,11 +26,29 @@ export default function AddParcel() {
         'carrier': carrier
     };
     return(
+        <View>
+        {
+            saving == true &&
+            <View style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.562)',
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                zIndex: 1,
+                top: 0,
+                bottom: 0,
+                height: windowHeight,
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}>
+            <ActivityIndicator size='large' color={'#fff'} />
+            </View>
+        }
         <KeyboardAvoidingView behavior={'position'}>
             <View style={{padding: 25, marginTop: '70%'}}>
-                <Text style={{marginBottom: 15, color: '#434994', fontWeight: 'bold', textTransform: 'uppercase'}}>
+                <StyledText style={{marginBottom: 15, color: '#434994', textTransform: 'uppercase'}} weight={'bold'}>
                     Adicionar Rastreio
-                </Text>
+                </StyledText>
                 <Divider/>
                 <TextInput
                     mode={'outlined'}
@@ -53,9 +78,11 @@ export default function AddParcel() {
                 </View>
                 <Button icon={() => <Feather name={'package'} size={24} color={'white'}></Feather>} mode="contained" style={{marginTop:10, backgroundColor: '#434994'}}
             onPress={async () => {
-                let data:userData = await _saveData(dataToSave);
-                userData.setData(data);
-                return;
+                setSaving(true);
+                    return userData.setData(await _saveData(dataToSave)).then(() => {
+                        setSaving(false)
+                        navigation.navigate('Encomendas');
+                    });
             }
             }>
                     Adicionar
@@ -64,11 +91,12 @@ export default function AddParcel() {
                 onPress={() => userData.setData(_deleteAll())}>
                     delete data
                 </Button>
-                <Button icon={() => <Feather name={'package'} size={24} color={'white'}></Feather>} mode="contained" style={{marginTop:10, backgroundColor: '#434994'}}
+                {/* <Button icon={() => <Feather name={'package'} size={24} color={'white'}></Feather>} mode="contained" style={{marginTop:10, backgroundColor: '#434994'}}
                 onPress={() => console.log(userData.data)}>
                     show data
-                </Button>
+                </Button> */}
             </View>
         </KeyboardAvoidingView>
+        </View>
     );
 };
