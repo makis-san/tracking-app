@@ -10,7 +10,11 @@ import { _deleteAll, _archive, _delete } from'../../services/parcels/functions';
 import AppContext from '../../components/AppContext';
 import { env } from 'process';
 import { ParcelData } from '../../@types';
-
+const swipe = {
+    toValue: {x: 0, y: 0},
+    duration: 250,
+    useNativeDriver: true
+}
  export const Item:React.FC<{
     data: {
         id: string;
@@ -22,15 +26,13 @@ import { ParcelData } from '../../@types';
         tracking: string;
         added_at: string;
         archived: boolean;
-    }
+    },
+    navigation?: any
 }> = ({
-    data
+    data,
+    navigation = useNavigation()
 }) => {
     let color:string = '#434994';
-    if (data.events[data.events.length-1].status.indexOf('entregue')) {
-        // color = '#439447'
-    }
-    
     const styles = StyleSheet.create({
         carrier_text: {
             fontSize: 12,
@@ -52,6 +54,7 @@ import { ParcelData } from '../../@types';
             backgroundColor: '#fff',
             margin: 10,
             marginRight: 0,
+            marginLeft: 0,
             padding: 10,
             paddingLeft: 20,
             paddingRight: 20,
@@ -82,36 +85,20 @@ import { ParcelData } from '../../@types';
         let startDate = new Date(start[1]+'/'+start[0]+'/'+start[2]);
         let actualDate = new Date();
         const leftButtons = [
-            <TouchableOpacity 
-            onPress={() => userData.setData(_archive(data.id))}
-            style={{
-                backgroundColor: '#dbce86',
-                padding: 25,
-                marginTop: 10,
-                flex: 1,
-            }}>
-            <Div type={'center'}>  
-              <Feather name={'archive'} size={28} color='white'></Feather>
-            </Div>
-        </TouchableOpacity>
-        ]
-    const rightButtons = [
-        <TouchableOpacity 
-        onPress={() => userData.setData(_delete(data.id))}
-        style={{
-            flex: 1,
-            backgroundColor: '#db8686',
-            padding: 25,
-            marginTop: 10,
-        }}>
-            <Div type={'center'}>  
-              <Feather name={'delete'} size={28} color='white'></Feather>
-            </Div>
-    </TouchableOpacity>
-    ];
-    const navigation = useNavigation();
+            <TouchableOpacity onPress={() => userData.setData(_archive(data.id))} style={{backgroundColor: '#e6df82', padding: 20, margin:20, marginLeft: 0, marginTop: 10, marginBottom: 0, paddingTop: 45, paddingBottom: 50, flexDirection: 'row-reverse'}}>
+                  <Feather name={'archive'} size={32} color={'white'}></Feather>
+            </TouchableOpacity>
+          ];
+ 
+        const rightButtons = [
+          <TouchableOpacity onPress={() => userData.setData(_delete(data.id))} style={{backgroundColor: '#e68282', padding: 20, margin:20, marginLeft: 0, marginTop: 10, marginBottom: 0, paddingTop: 45, paddingBottom: 50}}>
+                <Feather name={'delete'} size={32} color={'white'}></Feather>
+          </TouchableOpacity>
+        ];
+         
     return(
-      <Swipeable rightButtons={rightButtons} leftContent={leftButtons}>
+      <Swipeable  leftButtons={leftButtons} rightButtons={rightButtons} onRightActionComplete={() =>userData.setData(_delete(data.id))} onLefttActionComplete={() => userData.setData(_archive(data.id))}
+      swipeReleaseAnimationConfig={swipe}>
         <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('Details', {title: data.name, id: data.id, carrier: data.carrier, events: data.events})}>
             <Div style={{flexDirection: 'row'}}>
                 <Div type='center' flex={0} style={{marginRight: 20}}>

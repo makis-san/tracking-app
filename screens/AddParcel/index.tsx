@@ -26,9 +26,8 @@ export default function AddParcel(navigation = useNavigation()) {
     const CreateParcel = async (dataToSave: any) => {
         setSaving(true);
         let data = await _saveData(dataToSave);
-        userData.setData(data);
         setSaving(false);
-        return navigation.navigate('Encomendas');
+        return;
     }
 
     return(
@@ -51,7 +50,7 @@ export default function AddParcel(navigation = useNavigation()) {
             </View>
         }
         <KeyboardAvoidingView behavior={'position'}>
-            <View style={{padding: 25, marginTop: '70%'}}>
+            <View style={{padding: 25, marginTop: '50%'}}>
                 <StyledText style={{marginBottom: 15, color: '#434994', textTransform: 'uppercase'}} weight={'bold'}>
                     Adicionar Rastreio
                 </StyledText>

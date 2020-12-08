@@ -9,7 +9,7 @@ export async function _archive(id: string) {
         if (!Fetched) return;
         let data = JSON.parse(Fetched) as userData;
         data.parcels.filter(function(item, index) { 
-            if (item.id != id) return;
+            if (item.tracking != id) return;
             if (data.parcels[index].archived == false) {
                 data.parcels[index].archived = true;
             } else {
@@ -31,7 +31,7 @@ export async function _delete(id: string) {
         if (!Fetched) return;
         let data = JSON.parse(Fetched) as userData;
         data.parcels.filter(function(item, index) { 
-            if (item.id != id) return;
+            if (item.tracking != id) return;
             delete data.parcels[index];   
         });
         AsyncStorage.setItem('data', JSON.stringify(data));
@@ -62,10 +62,12 @@ export function _deleteAll() {
 };
 
 export async function _saveData(dataToSave:any) {
+    try {
     let newData:any, oldData:userData|undefined = undefined;
     const trackData:[{data:string, hora:string, local:string, status:string}] = await track(dataToSave.tracking, dataToSave.carrier);
     if (!trackData) return;
-    // console.log(trackData);
+
+    console.log(trackData);
     let Fetched = await AsyncStorage.getItem('data');
     
     if (Fetched) oldData = JSON.parse(Fetched) as userData;
@@ -104,4 +106,7 @@ export async function _saveData(dataToSave:any) {
         AsyncStorage.setItem('data', JSON.stringify(newData));
         return newData;
     }
+}catch (error) {
+    console.log(error);
+}
 }

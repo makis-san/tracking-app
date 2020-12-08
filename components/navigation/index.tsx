@@ -3,12 +3,12 @@ import { Text, View } from 'react-native';
 
 import { NavigationContainer, useRoute } from '@react-navigation/native';
 import { createStackNavigator, HeaderTitle } from '@react-navigation/stack'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createMaterialTopTabNavigator  } from '@react-navigation/material-top-tabs';
 import { Feather } from '@expo/vector-icons';
 
 
 const App = createStackNavigator();
-const Tab = createBottomTabNavigator();
+const Tab = createMaterialTopTabNavigator ();
 
 /*
 * Screens
@@ -24,44 +24,28 @@ const Tabs = () => {
     return(
             <Tab.Navigator
             initialRouteName={'Encomendas'}
-            screenOptions={({ route }) => ({
-
-                tabBarIcon: ({ focused, color, size }) => {
-                    let iconName: string = 'map';
-                    let style: any;
-                    switch(route.name) {
-                        case 'Encomendas':
-                            iconName = 'map';
-                            break;
-                        case 'Arquivo':
-                            iconName = 'archive';
-                            break;
-                        case 'AddParcel':
-                            iconName = 'plus-circle';
-                            color = '#fff';
-                            size = 32;
-                            style = {
-                                backgroundColor: '#434994',
-                                borderRadius: 50,
-                                borderBottomLeftRadius: 0,
-                                borderBottomRightRadius: 0,
-                                padding: 10,
-                                marginTop: 11
-                            };
-                            break;
-                    }
-                return <Feather style={style} name={iconName} size={size} color={color} />;
-                },
-            })}
+            tabBarPosition={'bottom'}
+            swipeEnabled={false}
             tabBarOptions={{
-                activeTintColor: '#434994',
-                inactiveTintColor: 'gray',
-            }}
+                pressColor:'#434994',
+                activeTintColor:'#434994',
+                inactiveTintColor:'gray',
+                labelStyle: { fontSize: 12 },
+                showIcon: true
+              }}
+             
             >
 
-                <Tab.Screen name="Encomendas" component={MainScreen} />
-                <Tab.Screen name="AddParcel" component={AddParcel} options={{tabBarVisible: false, title: ''}} />
-                <Tab.Screen name="Arquivo" component={ArchivedScreen}/>
+                <Tab.Screen name="Encomendas" component={MainScreen} 
+                    options={{
+                        tabBarIcon: ({color}) => (<Feather name={'package'} size={24} color={color}></Feather>)
+                    }}
+                />
+                <Tab.Screen name="Arquivo" component={ArchivedScreen}
+                    options={{
+                        tabBarIcon: ({color}) => (<Feather name={'archive'} size={24} color={color}></Feather>)
+                    }}
+                />
 
                 {/* <Tab.Screen name="Settings" component={} /> */}
             </Tab.Navigator>
@@ -72,6 +56,7 @@ export default function Main() {
     return(
         <NavigationContainer>
             <App.Navigator initialRouteName={"App"} screenOptions={{headerStyle: {backgroundColor: '#434994'}, headerTintColor:'#fff'}}>
+                <Tab.Screen name="AddParcel" component={AddParcel} options={{title: 'Adicionar Encomenda'}}/>
                 <App.Screen name="App" component={Tabs} options={{headerShown: false}}/>
                 <App.Screen name="Details" component={Details} options={({ route = useRoute() }:any) => ({ title: route?.params?.title+ ' ['+route?.params?.carrier+']' })}/>
             </App.Navigator>

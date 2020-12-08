@@ -46,7 +46,7 @@ export default function MainScreen () {
             >
                { 
                parcels.length > 0 
-               ? parcels.map(item => <Item id={item.id} data={item} />)
+               ? parcels.map(item => <Item key={item.tracking} data={item} />)
                : <NotFound/>
                }
             </List>
