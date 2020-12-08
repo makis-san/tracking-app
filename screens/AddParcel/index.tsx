@@ -27,7 +27,7 @@ export default function AddParcel(navigation = useNavigation()) {
         setSaving(true);
         let data = await _saveData(dataToSave);
         setSaving(false);
-        return;
+        return data;
     }
 
     return(
@@ -82,7 +82,7 @@ export default function AddParcel(navigation = useNavigation()) {
                     </Picker>
                 </View>
                 <Button icon={() => <Feather name={'package'} size={24} color={'white'}></Feather>} mode="contained" style={{marginTop:10, backgroundColor: '#434994'}}
-                onPress={() => CreateParcel(dataToSave)}>
+                onPress={() => userData.setData(CreateParcel(dataToSave))}>
                     Adicionar
                 </Button>
                 <Button icon={() => <Feather name={'package'} size={24} color={'white'}></Feather>} mode="contained" style={{marginTop:10, backgroundColor: '#434994'}}

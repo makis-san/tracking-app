@@ -49,48 +49,58 @@ export default async function track(tracking: string, carrier: 'Correios'|'Cargo
 
 function convertHtmlToJson(htmlString:string, carrier: 'Correios'|'CargoBr'|'Jadlog') {
     const html = cheerio.load(htmlString);
-    // console.log(htmlString);
     // console.log(tableToJson(htmlString));
 
     let find:string = '';
     const elemArray:any = [];
-      if (carrier == 'Correios') {
-       html("ul.linha_status").each((_, elem) => {
-         elemArray.push(elem);
-       });
-       find = 'li';
-    } else if (carrier == "CargoBr"){
-      html("div.tracking").each((_, elem) => {
-        elemArray.push(elem);
-      });
-      find = '.col-md-11';
-    } else if (carrier == "Jadlog") {
-      html("table").each((_, elem) => {
-        elemArray.push(elem);
-      });
-    } else {
-      return;
-    }
-    elemArray.shift()
-    const elemMap = elemArray.map((elem:any) => {
-      const mapObj:any = {};
-      html(elem)
-        .find(find)
-        .each((_, liElem) => {
-          const text = html(liElem).text();
-          if (text) {
-            if (text.includes("Status")) mapObj.status = formatStatus(text);
-            if (text.includes("Data")) {
-              const dateTime = formatDateTime(text);
-              mapObj.data = dateTime[0];
-              mapObj.hora = dateTime[1];
-            }
-            if (text.includes("Local")) mapObj.local = formatLocal(text);
-            if (text.includes("Origem")) mapObj.origem = formatOrigin(text);
-            if (text.includes("Destino")) mapObj.destino = formatDestiny(text);
-          }
+    let elemMap: any[];
+    switch (carrier) {
+      case 'Correios':
+        html("ul.linha_status").each((_, elem) => {
+          elemArray.push(elem);
+          find = 'li';
         });
-      return mapObj;
-    });
-    return elemMap.reverse();
+          elemArray.shift()
+           elemMap = elemArray.map((elem:any) => {
+              const mapObj:any = {};
+              html(elem)
+                .find(find)
+                .each((_, liElem) => {
+                  const text = html(liElem).text();
+                  if (text) {
+                    if (text.includes("Status")) mapObj.status = formatStatus(text);
+                    if (text.includes("Data")) {
+                      const dateTime = formatDateTime(text);
+                      mapObj.data = dateTime[0];
+                      mapObj.hora = dateTime[1];
+                    }
+                    if (text.includes("Local")) mapObj.local = formatLocal(text);
+                    if (text.includes("Origem")) mapObj.origem = formatOrigin(text);
+                    if (text.includes("Destino")) mapObj.destino = formatDestiny(text);
+                  }
+                });
+              return mapObj;
+            });
+        break;
+      case 'CargoBr':
+        html('.tracking .tracking-header').each((index, elem) => {
+          const actual = index;
+          elemArray[actual] = {header: '' ,body: ''}
+          elemArray[index].header = html(elem).text();
+          html(elem).next('.tracking-detalhe').each((_,child) => {
+            elemArray[actual].body = html(child).text();
+          })
+
+        });
+        console.log(elemArray);
+          elemMap = elemArray.map((_:any,elem:any) => {
+            
+          })
+          // console.log(elemMap);
+        break;
+    }
+    // return elemMap.reverse();
+
+
+
   }

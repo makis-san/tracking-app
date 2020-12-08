@@ -45,9 +45,9 @@ export default function MainScreen () {
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
                { 
-               parcels.length > 0 
-               ? parcels.map(item => <Item key={item.tracking} data={item} />)
-               : <NotFound/>
+            //    parcels.length > 0 
+            //    ? parcels.map(item => <Item key={item.tracking} data={item} />)
+            //    : <NotFound/>
                }
             </List>
             <FloatingButton/>
