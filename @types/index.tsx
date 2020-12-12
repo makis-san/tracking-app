@@ -6,13 +6,15 @@ export interface userData {
             last: string,
             events: [Record<string,string>],
             sent_at: string,
-            carrier: string,
+            carrier: 'Correios'|'CargoBr'|'Jadlog',
             tracking: string,
             added_at: string,
+            updated_at?: string,
             archived: boolean
         }
     ]
 };
+
 
 export interface ParcelData {
     id: number,
@@ -20,8 +22,9 @@ export interface ParcelData {
     last: string,
     events: [Record<string,string>],
     sent_at: string,
-    carrier: string,
+    carrier: 'Correios'|'CargoBr'|'Jadlog',
     added_at: string,
+    updated_at?: string,
     archived: boolean
 };
 

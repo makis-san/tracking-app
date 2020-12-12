@@ -4,7 +4,7 @@ import Item from '../../components/parcel_card';
 
 import { List, FloatingButton } from './styles';
 import { userData, ParcelData } from '../../@types/index';
-import { _retrieveData } from '../../services/parcels/functions';
+import { _retrieveData, _update } from '../../services/parcels/functions';
 import AppContext from "../../components/AppContext";
 import { HookCallbacks } from 'async_hooks';
 import { NotFound } from '../../components/common_elements';
@@ -31,6 +31,7 @@ export default function MainScreen () {
     const [refreshing = false, setRefresh]:any = useState(false);
     const onRefresh = React.useCallback(() => {
         setRefresh(true);
+        _update();
         fetchData();
         setTimeout(() => {
          setRefresh(false);
@@ -45,9 +46,9 @@ export default function MainScreen () {
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
                { 
-            //    parcels.length > 0 
-            //    ? parcels.map(item => <Item key={item.tracking} data={item} />)
-            //    : <NotFound/>
+               parcels.length > 0 
+               ? parcels.map((item,index) => <Item key={index} data={item} />)
+               : <NotFound/>
                }
             </List>
             <FloatingButton/>

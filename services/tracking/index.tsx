@@ -1,8 +1,9 @@
 import axios from "axios";
 import { DOMElement } from "react";
 import cheerio from 'cheerio';
-import { formatStatus, formatDateTime, formatLocal, formatOrigin, formatDestiny } from "../formatter";
+import { formatStatus, formatDateTime, formatLocal, formatOrigin, formatDestiny, parseData, parseHora } from "../formatter";
 import tableToJson from '../table';
+import { cos } from "react-native-reanimated";
 global.Buffer = global.Buffer || require('buffer').Buffer;
 
 const url:any = {
@@ -53,7 +54,7 @@ function convertHtmlToJson(htmlString:string, carrier: 'Correios'|'CargoBr'|'Jad
 
     let find:string = '';
     const elemArray:any = [];
-    let elemMap: any[];
+    let elemMap: any[] = [];
     switch (carrier) {
       case 'Correios':
         html("ul.linha_status").each((_, elem) => {
@@ -81,25 +82,32 @@ function convertHtmlToJson(htmlString:string, carrier: 'Correios'|'CargoBr'|'Jad
                 });
               return mapObj;
             });
+            elemMap = elemMap.reverse()
         break;
       case 'CargoBr':
+        let mapObj:any = {};
         html('.tracking .tracking-header').each((index, elem) => {
           const actual = index;
           elemArray[actual] = {header: '' ,body: ''}
           elemArray[index].header = html(elem).text();
+          let dataAct = parseData(html(elem).text())
+          mapObj.data = dataAct[0]+'/'+dataAct[1]+'/'+dataAct[2];
+
           html(elem).next('.tracking-detalhe').each((_,child) => {
             elemArray[actual].body = html(child).text();
-          })
+            mapObj.hora = parseHora(html(child).text()).replace(' ', '');
+            mapObj.status = html(child).text().replace(mapObj.hora, '');
+            mapObj.local = html(child).next('span').text();
+            mapObj.origem = html(child).next('span').text();
+            mapObj.destino = html(child).next('span').text();
 
+          });
         });
-        console.log(elemArray);
-          elemMap = elemArray.map((_:any,elem:any) => {
-            
-          })
-          // console.log(elemMap);
+          elemMap = mapObj;
+          return elemMap;
         break;
     }
-    // return elemMap.reverse();
+    return elemMap;
 
 
 

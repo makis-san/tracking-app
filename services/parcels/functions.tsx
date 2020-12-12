@@ -25,6 +25,40 @@ export async function _archive(id: string) {
     }
 }
 
+export async function _update(id?: string) {
+    if (id) return;
+    const fetched  = await AsyncStorage.getItem('data');
+        if (!fetched) return;
+        const data = JSON.parse(fetched) as userData;
+        let newData:any = data;
+        newData.parcels = [];
+        data.parcels.forEach(async function(item,index) {
+            const trackData:[{data:string, hora:string, local:string, status:string}] = await track(item.tracking, item.carrier) as [{data:string, hora:string, local:string, status:string}];
+            if (!trackData) {
+                newData.parcels.push(item);
+                return;
+            };
+            let data =
+            {
+                "id": item.tracking,
+                "name": item.name,
+                "last": trackData[trackData.length-1]?.status+'\n'+trackData[trackData.length-1]?.local,
+                "events": trackData,
+                'carrier': item.carrier,
+                'tracking': item.tracking,
+                'added_at': item.added_at,
+                'updated_at': Date.now,
+                'archived': item.archived
+            }
+            newData.parcels.push(data);
+            return data;
+        });
+
+        AsyncStorage.setItem('data', newData);
+
+    return;
+}
+
 export async function _delete(id: string) {
     try {
         let Fetched:any = await AsyncStorage.getItem('data');
@@ -64,7 +98,7 @@ export function _deleteAll() {
 export async function _saveData(dataToSave:any) {
     try {
     let newData:any, oldData:userData|undefined = undefined;
-    const trackData:[{data:string, hora:string, local:string, status:string}] = await track(dataToSave.tracking, dataToSave.carrier);
+    const trackData:[{data:string, hora:string, local:string, status:string}] = await track(dataToSave.tracking, dataToSave.carrier) as [{data:string, hora:string, local:string, status:string}];
     if (!trackData) return;
 
     console.log(trackData);
@@ -77,7 +111,7 @@ export async function _saveData(dataToSave:any) {
         {
             "id": dataToSave.tracking,
             "name": dataToSave.name,
-            "last": trackData[trackData.length-1].status+'\n'+trackData[trackData.length-1].local,
+            "last": trackData[trackData.length-1]?.status+'\n'+trackData[trackData.length-1]?.local,
             "events": trackData,
             'carrier': dataToSave.carrier,
             'tracking': dataToSave.tracking,

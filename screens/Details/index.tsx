@@ -6,12 +6,27 @@ import { Feather } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { EventsData } from '../../@types';
 import { ScrollView } from 'react-native-gesture-handler';
-
+import Clipboard from '@react-native-community/clipboard';
 
 export default function Details () {
+    
     const route = useRoute();
     const navigation = useNavigation();
     const data:any = route.params;
+
+    const copy = async () => {
+        await Clipboard.setString(data.id);
+        return;
+      };
+
+    const [refreshing = false, setRefresh]:any = useState(false);
+    const onRefresh = React.useCallback(() => {
+        setRefresh(true);
+        setTimeout(() => {
+         setRefresh(false);
+        }, 2000);
+    },[]);
+
     return(
         <View
             style={
@@ -28,13 +43,15 @@ export default function Details () {
                 <StyledText style={{paddingRight: 15}}>
                     Código de Rastreio: 
                 </StyledText>
-                <StyledText weight={'600'}>
-                    {'  '+data.id}
-                </StyledText>
+                <TouchableOpacity onPress={() => copy()}>
+                    <StyledText weight={'600'}>
+                        {'  '+data.id}
+                    </StyledText>
+                </TouchableOpacity>
             </StyledText>
         </Div>
 
-            <ScrollView style={{marginTop: 25}}>
+            <ScrollView style={{marginTop: 25}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>} >
             {
                 data.events.slice(0).reverse().map((item:EventsData) => {
                     let local:string = '';

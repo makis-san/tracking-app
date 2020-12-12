@@ -8,21 +8,30 @@ import { _saveData, _deleteAll } from '../../services/parcels/functions';
 import AppContext from '../../components/AppContext';
 import { userData } from '../../@types';
 import { Dimensions } from 'react-native';
+import Clipboard from '@react-native-community/clipboard';
 
 let windowHeight = Dimensions.get('window').height;
 export default function AddParcel(navigation = useNavigation()) {
+    const [copiedText, setCopiedText] = useState('');
     const userData:any = useContext(AppContext);
     const [rastreio, setRastreio]:any = useState();
     const [name, setName]:any = useState();
 
     const [saving = false, setSaving]:any = useState();
-
+    const getClipboard = async () => {
+        setCopiedText(await Clipboard.getString());
+        setRastreio(copiedText);
+        return;
+    };
     const [carrier, setCarrier]:any = useState();
     let dataToSave = {
         'name': name,
         'tracking': rastreio,
         'carrier': carrier
     };
+    useEffect(() => {
+        getClipboard();
+    })
     const CreateParcel = async (dataToSave: any) => {
         setSaving(true);
         let data = await _saveData(dataToSave);
@@ -50,7 +59,7 @@ export default function AddParcel(navigation = useNavigation()) {
             </View>
         }
         <KeyboardAvoidingView behavior={'position'}>
-            <View style={{padding: 25, marginTop: '50%'}}>
+            <View style={{padding: 25, marginTop: 50}}>
                 <StyledText style={{marginBottom: 15, color: '#434994', textTransform: 'uppercase'}} weight={'bold'}>
                     Adicionar Rastreio
                 </StyledText>

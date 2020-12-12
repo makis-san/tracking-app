@@ -79,10 +79,11 @@ const swipe = {
               fontSize: 12
           }
     })
-    let startDateS = data.events[data.events.length-1].data;
+    let startDateS = data?.events[data?.events?.length-1]?.data;
     const userData:any = useContext(AppContext);
     let start = startDateS.split('/');
-        let startDate = new Date(start[1]+'/'+start[0]+'/'+start[2]);
+    let startDate:any;
+        startDate = new Date(start[1]+'/'+start[0]+'/'+start[2]);
         let actualDate = new Date();
         const leftButtons = [
             <TouchableOpacity onPress={() => userData.setData(_archive(data.id))} style={{backgroundColor: '#e6df82', padding: 20, margin:20, marginLeft: 0, marginTop: 10, marginBottom: 0, paddingTop: 45, paddingBottom: 50, flexDirection: 'row-reverse'}}>
@@ -109,7 +110,7 @@ const swipe = {
                         {data.name}
                     </StyledText>
                     <StyledText>
-                        {data.last}
+                        {data.last.replace('undefined', '')}
                     </StyledText>
                 </Div>
                 <Div type='center' flex={1}>
@@ -125,7 +126,7 @@ const swipe = {
             </Div>
             <Div style={styles.counter}>
                 <StyledText weight={'800'} style={styles.counter_text}>
-                    Enviado há {Math.ceil((actualDate.getTime() - startDate.getTime()) / (1000*3600*24))} dias...
+                    Enviado há {Math.ceil((actualDate?.getTime() - startDate?.getTime()) / (1000*3600*24))} dias...
                 </StyledText>
             </Div>
         </TouchableOpacity>
