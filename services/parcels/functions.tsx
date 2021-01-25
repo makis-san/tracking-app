@@ -25,36 +25,48 @@ export async function _archive(id: string) {
     }
 }
 
+async function fetchUpdate(data:userData) {
+    let newData:any = {parcels:[]};
+    let res:any = [];
+    data.parcels.forEach(async function(item,index) {
+        const trackData:[{data:string, hora:string, local:string, status:string}] = await track(item.tracking, item.carrier) as [{data:string, hora:string, local:string, status:string}];
+        if (!trackData) {
+            return newData.parcels.push(item);
+        };
+        let data =
+        {
+            "id": item.tracking,
+            "name": item.name,
+            "last": trackData[trackData.length-1]?.status+'\n'+trackData[trackData.length-1]?.local,
+            "events": trackData,
+            'carrier': item.carrier,
+            'tracking': item.tracking,
+            'added_at': item.added_at,
+            'updated_at': Date.now,
+            'archived': item.archived
+        }
+        
+        // console.log(data);
+        return res.push(data);
+    });
+    if (res != undefined) {
+        return res;
+    }
+}
 export async function _update(id?: string) {
-    if (id) return;
-    const fetched  = await AsyncStorage.getItem('data');
+    let fetched:any = await AsyncStorage.getItem('data');
         if (!fetched) return;
-        const data = JSON.parse(fetched) as userData;
-        let newData:any = data;
-        newData.parcels = [];
-        data.parcels.forEach(async function(item,index) {
-            const trackData:[{data:string, hora:string, local:string, status:string}] = await track(item.tracking, item.carrier) as [{data:string, hora:string, local:string, status:string}];
-            if (!trackData) {
-                newData.parcels.push(item);
-                return;
-            };
-            let data =
-            {
-                "id": item.tracking,
-                "name": item.name,
-                "last": trackData[trackData.length-1]?.status+'\n'+trackData[trackData.length-1]?.local,
-                "events": trackData,
-                'carrier': item.carrier,
-                'tracking': item.tracking,
-                'added_at': item.added_at,
-                'updated_at': Date.now,
-                'archived': item.archived
-            }
-            newData.parcels.push(data);
-            return data;
-        });
+        let data:userData = JSON.parse(fetched);
+        // console.log(data);
+        let newData:any = {parcels:[]};
+        // console.log(data.parcels);
 
-        AsyncStorage.setItem('data', newData);
+        newData.parcels = [];
+        let dataadd = await fetchUpdate(data);
+        console.log(dataadd);
+        // console.log(newData.parcels);
+
+        // AsyncStorage.setItem('data', JSON.stringify(newData));
 
     return;
 }
@@ -107,11 +119,13 @@ export async function _saveData(dataToSave:any) {
     if (Fetched) oldData = JSON.parse(Fetched) as userData;
 
     if (oldData) {
+        // "last": trackData[trackData.length-1]?.status+'\n'+trackData[trackData.length-1]?.local,
+
         newData =
         {
             "id": dataToSave.tracking,
             "name": dataToSave.name,
-            "last": trackData[trackData.length-1]?.status+'\n'+trackData[trackData.length-1]?.local,
+            "last": 'cu',
             "events": trackData,
             'carrier': dataToSave.carrier,
             'tracking': dataToSave.tracking,
@@ -127,7 +141,7 @@ export async function _saveData(dataToSave:any) {
                 {
                     "id": dataToSave.tracking,
                     "name": dataToSave.name,
-                    "last": trackData[trackData.length-1].status+'\n'+trackData[trackData.length-1].local,
+                    "last": 'cu',
                     "events": trackData,
                     'carrier': dataToSave.carrier,
                     'tracking': dataToSave.tracking,

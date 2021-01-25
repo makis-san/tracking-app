@@ -9,7 +9,7 @@ import AppContext from './components/AppContext';
 import tracking from './services/tracking';
 
 import { useFonts, Nunito_200ExtraLight, Nunito_300Light, Nunito_400Regular, Nunito_700Bold, Nunito_800ExtraBold, Nunito_900Black } from '@expo-google-fonts/nunito';
-///
+
 export default function App() {
   let [fontsLoaded] = useFonts({
     Nunito_200ExtraLight, Nunito_300Light, Nunito_400Regular, Nunito_700Bold, Nunito_800ExtraBold, Nunito_900Black 

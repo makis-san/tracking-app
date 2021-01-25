@@ -29,10 +29,10 @@ export default function MainScreen () {
     useEffect(()=>{ fetchData()},[])
     
     const [refreshing = false, setRefresh]:any = useState(false);
-    const onRefresh = React.useCallback(() => {
+    const onRefresh = React.useCallback(async () => {
         setRefresh(true);
         _update();
-        fetchData();
+        // fetchData();
         setTimeout(() => {
          setRefresh(false);
         }, 2000);
